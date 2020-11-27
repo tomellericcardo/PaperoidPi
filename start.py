@@ -8,22 +8,28 @@ from printer import Printer
 from picamera import PiCamera
 
 
-printer = Printer('FC:58:FA:32:69:2D')
+address = 'FC:58:FA:32:69:2D'
+button = 12
+
+
+connected = False
+printer = Printer(address)
+while not printer.connected:
+    printer = Printer(address)
 
 camera = PiCamera()
-camera.rotation = 90
-
-b = Button(12)
+camera.resolution = (500, 500)
 
 
+b = Button(button)
 while True:
     b.wait_for_press()
     start = time()
     b.wait_for_release()
     stop = time()
     if (stop - start) < 3:
-        camera.capture('pictures/test.jpg')
-        printer.print('pictures/test.jpg')
+        camera.capture('latest.jpg')
+        printer.print('latest.jpg')
     else:
         system('shutdown now')
         break
