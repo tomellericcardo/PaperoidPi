@@ -53,7 +53,7 @@ class Paperang:
             logging.warning('\n'.join(valid_devices))
         else:
             logging.warning('Found a valid machine with MAC %s and name %s' % (valid_devices[0][0], valid_devices[0][1]))
-                self.address = valid_devices[0][0]
+            self.address = valid_devices[0][0]
         return True
 
     def scanservices(self):
