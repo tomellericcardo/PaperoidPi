@@ -1,16 +1,16 @@
 #!/usr/bin/python3
-# -*-coding:utf-8-*-
+# -*- coding: utf-8 -*-
 
-from enum import Enum
 
 class BtCommandByte():
+
     @staticmethod
     def findCommand(c):
-        keys = list(filter(lambda x: not x.startswith("__") and BtCommandByte.__getattribute__(BtCommandByte, x) == c,
-                      dir(BtCommandByte)))
+        keys = list(filter(lambda x: not x.startswith("__") and BtCommandByte.__getattribute__(BtCommandByte, x) == c, dir(BtCommandByte)))
         return keys[0] if keys else "NO_MATCH_COMMAND"
 
     __fmversion__ = "1.2.7"
+
     PRT_PRINT_DATA = 0
     PRT_PRINT_DATA_COMPRESS = 1
     PRT_FIRMWARE_DATA = 2
@@ -60,4 +60,3 @@ class BtCommandByte():
     PRT_SENT_COUNTRY_NAME = 46
     PRT_DISCONNECT_BT_CMD = 47
     PRT_MAX_CMD = 48
-
