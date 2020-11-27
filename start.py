@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from gpiozero import Button
+from time import time
 from os import system
 
 from printer import Printer
@@ -17,8 +18,10 @@ b = Button(12)
 
 while True:
     b.wait_for_press()
+    start = time()
     b.wait_for_release()
-    if b.held_time < 3:
+    stop = time()
+    if (stop - start) < 3:
         camera.capture('pictures/test.jpg')
         printer.print('pictures/test.jpg')
     else:
