@@ -17,7 +17,7 @@ b = Button(12)
 
 while True:
     b.wait_for_press()
-    if b.held_time() < 3:
+    if b.held_time < 3:
         camera.capture('pictures/test.jpg')
         printer.print('pictures/test.jpg')
     else:
