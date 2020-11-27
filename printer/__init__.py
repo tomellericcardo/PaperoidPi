@@ -1,13 +1,13 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 import struct, zlib, logging, codecs
 from bluetooth import BluetoothSocket, find_service, discover_devices
-from const import BtCommandByte
-from image_data import to_bin_image
+
+from .commands import BtCommandByte
+from .converter import to_bin_image
 
 
-class Paperang:
+class Printer:
 
     standardKey = 0x35769521
     padding_line = 300
@@ -132,6 +132,9 @@ class Paperang:
     def sendPowerOffTimeToBt(self, poweroff_time = 0):
         msg = struct.pack('<H', poweroff_time)
         self.sendToBt(msg, BtCommandByte.PRT_SET_POWER_DOWN_TIME)
+
+    def print(self, path):
+        self.sendImageToBt(path)
 
     def sendImageToBt(self, path):
         binary_img = to_bin_image(path)

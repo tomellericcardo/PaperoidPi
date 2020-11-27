@@ -41,6 +41,7 @@ def to_bit_stream(bin_image: np.ndarray):
 def to_bin_image(path):
     basewidth = 384
     img = Image.open(path).convert('L')
+    img = img.transpose(Image.ROTATE_90)
     wpercent = (basewidth / float(img.size[0]))
     hsize = int((float(img.size[1]) * float(wpercent)))
     img = img.resize((basewidth, hsize), Image.ANTIALIAS)
