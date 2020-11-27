@@ -1,10 +1,12 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
+import numba
 import numpy as np
 from PIL import Image, ImageEnhance
 
 
+@numba.jit
 def dither(num, thresh = 127):
     derr = np.zeros(num.shape, dtype = int)
     div = 8
