@@ -15,10 +15,13 @@ class Printer:
     max_recv_msg_length = 1024
     service_uuid = '00001101-0000-1000-8000-00805F9B34FB'
 
-    def __init__(self, address=None):
+    def __init__(self, address = None):
         self.address = address
         self.crckeyset = False
         self.connected = True if self.connect() else False
+
+    def init_converter(self, path):
+        to_bin_image(path)
 
     def connect(self):
         if self.address is None and not self.scandevices():

@@ -1,15 +1,13 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-import numba
 import numpy as np
+from numba import jit
 from PIL import Image, ImageEnhance
 
 
-@numba.jit
+@jit(nopython = True)
 def dither(num, thresh = 127):
     derr = np.zeros(num.shape, dtype = int)
-    div = 8
     for y in range(num.shape[0]):
         for x in range(num.shape[1]):
             newval = derr[y, x] + num[y ,x]
@@ -20,16 +18,16 @@ def dither(num, thresh = 127):
                 errval = newval
                 num[y, x] = 0.
             if x + 1 < num.shape[1]:
-                derr[y, x + 1] += errval / div
+                derr[y, x + 1] += errval / 8
                 if x + 2 < num.shape[1]:
-                    derr[y, x + 2] += errval / div
+                    derr[y, x + 2] += errval / 8
             if y + 1 < num.shape[0]:
-                derr[y + 1, x - 1] += errval / div
-                derr[y + 1, x] += errval / div
+                derr[y + 1, x - 1] += errval / 8
+                derr[y + 1, x] += errval / 8
                 if y + 2< num.shape[0]:
-                    derr[y + 2, x] += errval / div
+                    derr[y + 2, x] += errval / 8
                 if x + 1 < num.shape[1]:
-                    derr[y + 1, x + 1] += errval / div
+                    derr[y + 1, x + 1] += errval / 8
     return num[::-1,:] * 255
 
 def to_bit_stream(bin_image: np.ndarray):

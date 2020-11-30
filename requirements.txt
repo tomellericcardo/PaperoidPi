@@ -1,4 +1,4 @@
-numpy
 pybluez
+numpy
 pilkit
 numba
