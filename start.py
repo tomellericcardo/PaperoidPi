@@ -29,8 +29,8 @@ class Paperoid:
 
     def connect_printer(self, printer_mac):
         connected = False
-        while not self.printer.connected:
-            self.printer = Printer(address)
+        while not connected:
+            self.printer = Printer(printer_mac)
             connected = self.printer.connected
         path = '%s/pictures/placeholder.jpg' % self.path
         self.printer.init_converter(path)
@@ -46,9 +46,12 @@ class Paperoid:
         self.camera.capture(path)
         self.printer.print(path)
 
-    def shutdown(self):
+    def stop(self):
         self.camera.stop_preview()
         self.printer.disconnect()
+
+    def shutdown(self):
+        self.stop()
         system('shutdown now')
 
 
@@ -58,4 +61,4 @@ if __name__ == '__main__':
         while True:
             sleep(1)
     finally:
-        p.shutdown()
+        p.stop()

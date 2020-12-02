@@ -5,7 +5,7 @@ from numba import jit
 from PIL import Image, ImageEnhance
 
 
-@jit(nopython = True)
+@jit
 def dither(num, thresh = 127):
     derr = np.zeros(num.shape, dtype = int)
     for y in range(num.shape[0]):

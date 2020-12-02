@@ -1,4 +1,0 @@
-pybluez
-numpy
-pilkit
-numba
