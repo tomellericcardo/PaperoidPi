@@ -29,10 +29,10 @@ class Paperoid:
         self.button.when_released = self.shoot
 
     def connect_printer(self, printer_mac):
-        connected = False
-        while not connected:
+        self.printer = Printer(printer_mac)
+        while not self.printer.connected:
+            sleep(5)
             self.printer = Printer(printer_mac)
-            connected = self.printer.connected
         path = '%s/pictures/placeholder.jpg' % self.path
         self.printer.init_converter(path)
 
@@ -42,7 +42,7 @@ class Paperoid:
         self.camera.start_preview()
 
     def shoot(self):
-        if not self.stopping:
+        if self.printer.connected and not self.stopping:
             timestamp = datetime.now().isoformat()
             path = '%s/pictures/%s.jpg' % (self.path, timestamp)
             self.camera.capture(path)
