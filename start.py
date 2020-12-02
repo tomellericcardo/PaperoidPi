@@ -18,14 +18,15 @@ class Paperoid:
 
     def __init__(self, path, printer_mac, button_gpio):
         self.path = path
+        self.stopping = False
         self.init_button(button_gpio)
         self.connect_printer(printer_mac)
         self.start_camera()
 
     def init_button(self, button_gpio):
         self.button = Button(button_gpio, hold_time = 3)
-        self.button.when_pressed = self.shoot
         self.button.when_held = self.shutdown
+        self.button.when_released = self.shoot
 
     def connect_printer(self, printer_mac):
         connected = False
@@ -41,12 +42,14 @@ class Paperoid:
         self.camera.start_preview()
 
     def shoot(self):
-        timestamp = datetime.now().isoformat()
-        path = '%s/pictures/%s.jpg' % (self.path, timestamp)
-        self.camera.capture(path)
-        self.printer.print(path)
+        if not self.stopping:
+            timestamp = datetime.now().isoformat()
+            path = '%s/pictures/%s.jpg' % (self.path, timestamp)
+            self.camera.capture(path)
+            self.printer.print(path)
 
     def stop(self):
+        self.stopping = True
         self.camera.stop_preview()
         self.printer.disconnect()
 
