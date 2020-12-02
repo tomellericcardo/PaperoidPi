@@ -19,6 +19,7 @@ class Paperoid:
     def __init__(self, path, printer_mac, button_gpio):
         self.path = path
         self.stopping = False
+        self.camera_connected = False
         self.init_button(button_gpio)
         self.connect_printer(printer_mac)
         self.start_camera()
@@ -40,6 +41,7 @@ class Paperoid:
         self.camera = PiCamera()
         self.camera.resolution = (720, 720)
         self.camera.start_preview()
+        self.camera_connected = True
 
     def shoot(self):
         if self.printer.connected and not self.stopping:
@@ -50,15 +52,15 @@ class Paperoid:
 
     def stop(self):
         self.stopping = True
-        self.printer.disconnect()
-        self.camera.stop_preview()
-        self.camera.close()
+        if self.printer.connected:
+            self.printer.disconnect()
+        if self.camera_connected:
+            self.camera.stop_preview()
+            self.camera.close()
 
     def shutdown(self):
-        try:
-            self.stop()
-        finally:
-            system('shutdown now')
+        self.stop()
+        system('shutdown now')
 
 
 if __name__ == '__main__':
@@ -66,5 +68,5 @@ if __name__ == '__main__':
     try:
         while True:
             sleep(1)
-    finally:
+    except KeyboardInterrupt:
         p.stop()
