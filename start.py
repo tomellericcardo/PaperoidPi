@@ -50,12 +50,15 @@ class Paperoid:
 
     def stop(self):
         self.stopping = True
-        self.camera.stop_preview()
         self.printer.disconnect()
+        self.camera.stop_preview()
+        self.camera.close()
 
     def shutdown(self):
-        self.stop()
-        system('shutdown now')
+        try:
+            self.stop()
+        finally:
+            system('shutdown now')
 
 
 if __name__ == '__main__':
