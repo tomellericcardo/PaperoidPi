@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
+import cv2
 import numpy as np
 from numba import jit
-from PIL import Image, ImageEnhance
+from PIL import Image
 
 
 @jit
@@ -30,28 +31,27 @@ def dither(num, thresh = 127):
                     derr[y + 1, x + 1] += errval / 8
     return num[::-1,:] * 255
 
-def to_bit_stream(bin_image: np.ndarray):
+def adjust(path, min_brightness = 0.4, basewidth = 384):
+    original = cv2.flip(cv2.imread(path), 0)
+    gray = cv2.cvtColor(original, cv2.COLOR_BGR2GRAY)
+    cols, rows = gray.shape
+    brightness = np.sum(gray) / (255 * cols * rows)
+    ratio = brightness / min_brightness
+    adj = cv2.convertScaleAbs(gray, alpha = (1 / ratio), beta = 0)
+    pil = Image.fromarray(adj)
+    wpercent = (basewidth / float(pil.size[0]))
+    hsize = int((float(pil.size[1]) * float(wpercent)))
+    img = pil.resize((basewidth, hsize), Image.ANTIALIAS)
+    dithered = dither(np.array(img)[:,:])
+    return dithered
+
+def convert_img(path):
+    img = adjust(path)
+    bin_image = np.array(img).astype(bool).astype(int)
+    bin_image[bin_image == 1] = 2
+    bin_image[bin_image == 0] = 1
+    bin_image[bin_image == 2] = 0
     bits_str = ''.join(map(str, bin_image.flatten()))
     partitioned_str = [bits_str[i:i + 8] for i in range(0, len(bits_str), 8)]
     int_str = [int(i, 2) for i in partitioned_str]
     return bytes(int_str)
-
-def to_bin_image(path):
-    basewidth = 384
-    img = Image.open(path).convert('L')
-    img = img.transpose(Image.ROTATE_90)
-    wpercent = (basewidth / float(img.size[0]))
-    hsize = int((float(img.size[1]) * float(wpercent)))
-    img = img.resize((basewidth, hsize), Image.ANTIALIAS)
-    m = np.array(img)[:,:]
-    m2 = dither(m)
-    out = Image.fromarray(m2[::-1,:])
-    out.show()
-    enhancer = ImageEnhance.Contrast(out)
-    enhanced_img = enhancer.enhance(4.0)
-    enhanced_img.show()
-    np_img = np.array(enhanced_img).astype(bool).astype(int)
-    np_img[np_img == 1] = 100
-    np_img[np_img == 0] = 1
-    np_img[np_img == 100] = 0
-    return to_bit_stream(np_img)

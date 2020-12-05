@@ -4,7 +4,7 @@ import struct, zlib, logging, codecs
 from bluetooth import BluetoothSocket, find_service, discover_devices
 
 from .commands import BtCommandByte
-from .converter import to_bin_image
+from .converter import convert_img
 
 
 class Printer:
@@ -21,7 +21,7 @@ class Printer:
         self.connected = True if self.connect() else False
 
     def init_converter(self, path):
-        to_bin_image(path)
+        convert_img(path)
 
     def connect(self):
         if self.address is None and not self.scandevices():
@@ -140,7 +140,7 @@ class Printer:
         self.sendImageToBt(path)
 
     def sendImageToBt(self, path):
-        binary_img = to_bin_image(path)
+        binary_img = convert_img(path)
         self.sendPaperTypeToBt()
         msg = b''.join(map(lambda i: struct.pack('<c', i.to_bytes(1, byteorder = 'little')), binary_img))
         self.sendToBt(msg, BtCommandByte.PRT_PRINT_DATA, need_reply = False)

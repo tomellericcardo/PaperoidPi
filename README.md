@@ -25,5 +25,7 @@ sudo python3 /home/pi/PaperoidPi/start.py &
 ```
 
 ## To do
-- Add a web interface to change camera settings
-- Improve logging
+- Add a web interface to:
+  - change camera settings;
+  - view gallery;
+- Improve logging.

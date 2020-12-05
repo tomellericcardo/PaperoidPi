@@ -40,6 +40,7 @@ class Paperoid:
     def start_camera(self):
         self.camera = PiCamera()
         self.camera.resolution = (720, 720)
+        self.camera.rotation = 90
         self.camera.start_preview()
         self.camera_connected = True
 
